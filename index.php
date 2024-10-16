@@ -1,16 +1,8 @@
 <?php
 // boilerplate index
-function debug( $data,$die=false ) {
-    echo'<pre>';
-    print_r($data);
-    echo'</pre>';
-    if( $die ){ 
-    die;
-    }
-}
-
+require_once('./functions.php');
 $page=$_GET['page'] ?? 'home';
-
+debug($_COOKIE);
 
 ?>
 <!DOCTYPE html>
@@ -31,7 +23,7 @@ $page=$_GET['page'] ?? 'home';
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link <?php echo($page=='home' ? 'active':''); ?>" aria-current="page" href="?page=home">Начало</a>
@@ -43,6 +35,16 @@ $page=$_GET['page'] ?? 'home';
                             <a class="nav-link <?php echo($page=='contacts' ? 'active':''); ?>" href="?page=contacts">Контакти</a>
                         </li>
                     </ul>
+                    <div class="d-flex flex-row gap-3">
+                        <?php
+                        if(isset($_SESSION['user_name'])) {
+                        echo'<span class="text-white">Здравейте, '.$_SESSION['user_name'].'</span>';
+                        echo '<form class="m-0 method="POST" action="./Handlers/handleLogout.php" class="btn btn-outline-light"><button type="submit">Изход</></form>';
+                        }else{
+                            echo '<a href="?page=login" class="btn btn-outline-light">Вход</a>';
+                        }
+                        ?>          
+                    </div>
                 </div>
             </div>
         </nav>
