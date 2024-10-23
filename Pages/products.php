@@ -44,8 +44,9 @@
     ];
 
     $search='';
-    if(isset($_GET['search'])){
+    if(isset($_GET['search']) && !empty($_GET['search'])){
         $search = $_GET['search'];
+        setcookie('lastSearch', $search, time()+3600,'/','localhost',false,true);
         $products=array_filter($products,function($product) use ($search){
            return str_contains(mb_strtolower($product['title']),mb_strtolower($search));
         });   
@@ -60,6 +61,13 @@
             <button class="btn btn-primary" type="submit">Търсене</button>
         </div>
     </form>
+    <?php
+    if  (isset($_COOKIE['lastSearch'])){
+        echo '<div class="alert alert-info" role="alert">
+        Последно търсене: '.$_COOKIE['lastSearch'].'
+        </div>';
+    }
+    ?>
 </div>
 <div class="d-flex flex-wrap justify-content-between">
     <?php

@@ -10,8 +10,12 @@ function debug( $data,$die=false ) {
 }
 
 $page=$_GET['page'] ?? '';
-
-
+echo password_hash('123456',PASSWORD_ARGON2I);
+echo'<br>';
+echo password_hash('qwerty',PASSWORD_ARGON2I);
+echo'<br>';
+echo password_hash('asd123',PASSWORD_ARGON2I);
+echo'<br>';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,6 +47,20 @@ $page=$_GET['page'] ?? '';
                             <a class="nav-link <?php echo($page=='contacts' ? 'active':''); ?>" href="?page=contacts">Контакти</a>
                         </li>
                     </ul>
+                    <div>
+                        <?php 
+                        if (isset($_SESSION['user_name'])) {
+                            echo '<span class="text-white">Здравейте, ' . $_SESSION['user_name'] . '</span>';
+                            echo '
+                                <form method="POST" action="./handlers/handle_logout.php" class="m-0">
+                                    <button type="submit" class="btn btn-outline-light">Изход</button>
+                                </form>
+                            ';
+                        } else {
+                            echo '<a href="?page=login" class="btn btn-outline-light">Вход</a>';
+                        }
+                        ?>
+                    </div>
                 </div>
             </div>
         </nav>
