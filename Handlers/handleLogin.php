@@ -27,7 +27,7 @@ foreach ($users as $user) {
         $_SESSION['user_name']= $user['name'];
         setcookie('user_email', $user['email'], time()+3600,'/','localhost',false,true);
 }else{
-   // debug('fail',true);
+   // debug('fail',true);  
 }
 }
 header('Location: ../index.php?page=home');
