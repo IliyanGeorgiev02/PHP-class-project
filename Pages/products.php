@@ -12,7 +12,6 @@
             $products[] = $row;       
         }
     } 
-    debug($products);
 
     $search='';
     if(!empty($search)){

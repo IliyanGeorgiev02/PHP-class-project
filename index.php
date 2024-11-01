@@ -48,6 +48,20 @@ $page = $_GET['page'] ?? 'home';
                         }
                         ?>
                     </div>
+                    <div>
+                        <?php 
+                        if (isset($_SESSION['user_name'])) {
+                            echo '<span class="text-white">Здравейте, ' . $_SESSION['user_name'] . '</span>';
+                            echo '
+                                <form method="POST" action="./handlers/handle_register.php" class="m-0">
+                                    <button type="submit" class="btn btn-outline-light">Изход</button>
+                                </form>
+                            ';
+                        } else {
+                            echo '<a href="?page=register" class="btn btn-outline-light">Регистрация</a>';
+                        }
+                        ?>
+                    </div>
                 </div>
             </div>
         </nav>
