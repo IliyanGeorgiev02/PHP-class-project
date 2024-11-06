@@ -17,6 +17,16 @@ if(mb_strlen($error)>0){
     $email=trim($_POST['email']);
     $password=trim($_POST['password']);
     $repeat_password=trim($_POST['repeat_password']);
+    $query="SELECT * FROM users WHERE email=?";
+    $stmt=$pdo ->prepare($query);
+    $stmt->execute([$email]);
+    $user=$stmt->fetch();
+    debug($user,true);
+    if($user){
+        $error="Грешка при регистрация";
+        header('Location: ../index.php?page=register&error='.$error);
+        exit;
+    }
 
     if($password!=$repeat_password){
         $error='Невалидни данни';
@@ -24,9 +34,14 @@ if(mb_strlen($error)>0){
         exit;
     }else{
         $password=password_hash($password,PASSWORD_ARGON2I);
-        $query="INSERT INTO users (names,email, `password`) VALUES ('$names','$email','$password')";
-        $stmt=$pdo->query($query);
-        if($stmt){
+        $query="INSERT INTO users (names,email, `password`) VALUES (:names, :email, :password)";
+        $stmt=$pdo->prepare($query);
+        $params=[
+            ':names'=>$names,
+            ':email'=>$email,
+            ':password'=>$password
+        ];
+        if($stmt->execute($params)){
             header('Location: ../index.php?page=home');
         }else{
             $error='Невалидни данни';

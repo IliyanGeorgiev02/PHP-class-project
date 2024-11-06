@@ -3,6 +3,7 @@
 require_once('./functions.php');
 require_once('./db.php');
 $page = $_GET['page'] ?? 'home';
+debug($_SESSION);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,8 +14,18 @@ $page = $_GET['page'] ?? 'home';
     <!-- Bootstrap 5.3 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 </head>
 <body>
+    <script>
+        $(function(){
+            $(document).on('click', '.add-favorite',function(){
+                console.log('click');
+                let productId=$(this).data('product')
+                console.log(productId);
+            });
+        });
+    </script>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
             <div class="container-fluid">
@@ -37,30 +48,16 @@ $page = $_GET['page'] ?? 'home';
                     <div>
                         <?php 
                         if (isset($_SESSION['user_name'])) {
-                            echo '<span class="text-white">Здравейте, ' . $_SESSION['user_name'] . '</span>';
+                            echo '<span class="text-white">Здравейте, ' .htmlspecialchars($_SESSION['user_name']) . '</span>';
                             echo '
-                                <form method="POST" action="./handlers/handle_logout.php" class="m-0">
+                                <form method="POST" action="./Handlers/handleLogout.php" class="m-0">
                                     <button type="submit" class="btn btn-outline-light">Изход</button>
                                 </form>
                             ';
                         } else {
                             echo '<a href="?page=login" class="btn btn-outline-light">Вход</a>';
-                        }
-                        ?>
-                    </div>
-                    <div>
-                        <?php 
-                        if (isset($_SESSION['user_name'])) {
-                            echo '<span class="text-white">Здравейте, ' . $_SESSION['user_name'] . '</span>';
-                            echo '
-                                <form method="POST" action="./handlers/handle_register.php" class="m-0">
-                                    <button type="submit" class="btn btn-outline-light">Изход</button>
-                                </form>
-                            ';
-                        } else {
-                            echo '<a href="?page=register" class="btn btn-outline-light">Регистрация</a>';
-                        }
-                        ?>
+                            echo '<a href="?page=register" class="btn btn-outline-light">Регистрирай</a>';
+                        }                        ?>
                     </div>
                 </div>
             </div>
@@ -68,6 +65,9 @@ $page = $_GET['page'] ?? 'home';
     </header>
     <main class="container py-4" style="min-height:80vh;">
         <?php
+           if(isset($_GET['error'])){
+            echo'<div class="alert alert-danger">'.$_GET['error'].'</div>';
+            }
             if(file_exists('Pages/'.$page.'.php')) {
                 require_once('./Pages/'.$page.'.php');
             }else{
