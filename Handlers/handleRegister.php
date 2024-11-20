@@ -10,7 +10,11 @@ foreach($_POST as $key => $value){
     }
 }
 if(mb_strlen($error)>0){
-    header('Location: ../index.php?page=register&error='.$error);
+    $_SESSION['flash']['message']['type']='danger';
+    $_SESSION['flash']['message']['text']=$error;
+    $_SESSION['flash']['data']=$_POST;
+
+    header('Location: ../index.php?page=register');
     exit;
 }else{
     $names=trim($_POST['names']);
@@ -21,16 +25,23 @@ if(mb_strlen($error)>0){
     $stmt=$pdo ->prepare($query);
     $stmt->execute([$email]);
     $user=$stmt->fetch();
-    debug($user,true);
     if($user){
         $error="Грешка при регистрация";
-        header('Location: ../index.php?page=register&error='.$error);
+        $_SESSION['flash']['message']['type']='danger';
+        $_SESSION['flash']['message']['text']=$error;
+        $_SESSION['flash']['data']=$_POST;
+
+        header('Location: ../index.php?page=register');
         exit;
     }
 
     if($password!=$repeat_password){
         $error='Невалидни данни';
-        header('Location: ../index.php?page=register&error='.$error);
+        $_SESSION['flash']['message']['type']='danger';
+        $_SESSION['flash']['message']['text']=$error;
+        $_SESSION['flash']['data']=$_POST;
+
+        header('Location: ../index.php?page=register');
         exit;
     }else{
         $password=password_hash($password,PASSWORD_ARGON2I);
@@ -42,15 +53,19 @@ if(mb_strlen($error)>0){
             ':password'=>$password
         ];
         if($stmt->execute($params)){
+            $_SESSION['flash']['message']['type']='success';
+            $_SESSION['flash']['message']['text']="Успешна регистрация";
             header('Location: ../index.php?page=home');
+            exit;
         }else{
             $error='Невалидни данни';
-            header('Location: ../index.php?page=register&error='.$error);
+            $_SESSION['flash']['message']['type']='danger';
+            $_SESSION['flash']['message']['text']=$error;
+            $_SESSION['flash']['data']=$_POST;
+
+            header('Location: ../index.php?page=register');
             exit;
     }   
     }
 }
-
-
-
 ?>

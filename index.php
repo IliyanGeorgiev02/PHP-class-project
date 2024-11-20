@@ -3,7 +3,12 @@
 require_once('./functions.php');
 require_once('./db.php');
 $page = $_GET['page'] ?? 'home';
-debug($_SESSION);
+
+$flash=[];
+if(isset($_SESSION['flash'])){
+    $flash=$_SESSION['flash'];
+    unset($_SESSION['flash']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,10 +24,58 @@ debug($_SESSION);
 <body>
     <script>
         $(function(){
+            //adds to favs
             $(document).on('click', '.add-favorite',function(){
-                console.log('click');
-                let productId=$(this).data('product')
-                console.log(productId);
+                let btn=$(this);
+                let productId=$(this).data('product');
+
+
+                $.ajax({
+                    url:'./ajax/add_favorite.php',
+                    method:'POST',
+                    data:{
+                        product_id:productId
+                    },
+                    success:function(response){
+                        let res=JSON.parse(response);
+                        console.log(res);
+                        if(res.success){
+                            alert('Продукта успешно добавен в любими');
+                            let removeBtn=$(`<button class="btn btn-danger btn-sm remove-favorite" data-product="${productId}">Премахни от любими</button>`);
+                            btn.replaceWith(removeBtn);
+                        }else{
+                            alert('Грешка! Продукта не е добавен в любими'+res.error);
+                        }
+                        
+                    },error:function(error){
+                        console.log(error);
+                    }
+                });
+            });
+
+            $(document).on('click', '.remove-favorite',function(){
+                let btn=$(this);
+                let productId=$(this).data('product');
+                $.ajax({
+                    url:'./ajax/remove_favorite.php',
+                    method:'POST',
+                    data:{
+                        product_id:productId
+                    },
+                    success:function(response){
+                        let res=JSON.parse(response);
+                        if(res.success){
+                            alert('Продукта успешно премахнат от любими');
+                            let addBtn=$(`<button class="btn btn-primary btn-sm add-favorite" data-product="${productId}">Добави в любими</button>`);
+                            btn.replaceWith(addBtn);
+                        }else{
+                            alert('Грешка! Продукта не е добавен в любими'+res.error);
+                        }
+                        
+                    },error:function(error){
+                        console.log(error);
+                    }
+                });
             });
         });
     </script>
@@ -43,6 +96,9 @@ debug($_SESSION);
                         </li>
                         <li class="nav-item">
                             <a class="nav-link <?php echo($page=='contacts' ? 'active':''); ?>" href="?page=contacts">Контакти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo($page=='add_product' ? 'active':''); ?>" href="?page=add_product">Добави продукт</a>
                         </li>
                     </ul>
                     <div>
@@ -65,8 +121,12 @@ debug($_SESSION);
     </header>
     <main class="container py-4" style="min-height:80vh;">
         <?php
-           if(isset($_GET['error'])){
-            echo'<div class="alert alert-danger">'.$_GET['error'].'</div>';
+            if(isset($flash['message'])){
+                echo'
+                <div class="alert alert-'.$flash['message']['type'].'" role="alert">
+                '.$flash['message']['text'].'
+                </div>
+                ';
             }
             if(file_exists('Pages/'.$page.'.php')) {
                 require_once('./Pages/'.$page.'.php');
