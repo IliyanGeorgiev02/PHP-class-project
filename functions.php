@@ -8,4 +8,7 @@ function debug( $data,$die=false ) {
     }
 }
 
+function isAdmin(){
+    return isset($_SESSION['is_admin'])&& $_SESSION['is_admin']=='2';
+}
 ?>

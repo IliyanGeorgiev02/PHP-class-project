@@ -18,11 +18,11 @@ if(!password_verify($password,$user['password'])){
     header('Location: ../index.php?page=login&error=Грешен имейл или парола');
     exit;
 }
-
 session_start();
 $_SESSION['user_email']= $user['email'];
 $_SESSION['user_name']= $user['names'];
 $_SESSION['user_id']= $user['id'];
+$_SESSION['is_admin']=$user['is_admin'];
 
 setcookie('user_email', $user['email'], time()+3600,'/','localhost',false,true);
 

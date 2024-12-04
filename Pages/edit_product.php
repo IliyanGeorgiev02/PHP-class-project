@@ -21,6 +21,10 @@ debug($product);
         <input type="number" step="0.01" class="form-control" id="price" name="price" value="<?php echo $product['price'] ?? '' ?>">
     </div>
     <div class="mb-3">
+        <label for="price" class="form-label">Изображение:</label>
+        <input type="file"  class="form-control" id="image" name="image" accept="image/*">
+    </div>
+    <div class="mb-3">
        <img class="img-fluid" src="uploads/<?php echo $product['image'] ?>" alt="<?php echo $product['title']?>">
     </div>
     <input type="hidden" name="id" value="<?php echo $product['id'] ?>">

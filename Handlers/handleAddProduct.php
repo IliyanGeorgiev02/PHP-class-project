@@ -2,6 +2,14 @@
 require_once('../functions.php');
 require_once('../db.php');
 
+if(!isAdmin()){
+    $_SESSION['flash']['message']['type']='warning';
+    $_SESSION['flash']['message']['text']='нямате достъп до тази страница!';
+    header('Location:../index.php');
+    exit;
+}
+
+
 
 $title = trim($_POST['title']?? '');
 $price = trim($_POST['price']?? '');

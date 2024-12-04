@@ -3,12 +3,20 @@
 require_once('./functions.php');
 require_once('./db.php');
 $page = $_GET['page'] ?? 'home';
-
 $flash=[];
 if(isset($_SESSION['flash'])){
     $flash=$_SESSION['flash'];
     unset($_SESSION['flash']);
 }
+$adminPages=['add_product','edit_product'];
+
+if(!isAdmin() && in_array($page,$adminPages)){
+    $_SESSION['flash']['message']['type']='warning';
+    $_SESSION['flash']['message']['text']='нямате достъп до тази страница!';
+    header('Location:index.php');
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +27,10 @@ if(isset($_SESSION['flash'])){
     <!-- Bootstrap 5.3 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 <body>
     <script>
@@ -40,11 +51,53 @@ if(isset($_SESSION['flash'])){
                         let res=JSON.parse(response);
                         console.log(res);
                         if(res.success){
-                            alert('Продукта успешно добавен в любими');
+                                Swal.fire({
+                                    toast:true,
+                                    position:'top',
+                                    title:'Успешно добавен в любими',
+                                    icon:'success',
+                                    width: 600,
+                                    timer:7000,
+                                    timerProgressBar:true,
+                                    showConfirmButton:false,
+                                    didOpen: (toast) => {
+                                        toast.onmouseenter = Swal.stopTimer;
+                                        toast.onmouseleave = Swal.resumeTimer;
+                                    },
+                                    padding: "3em",
+                                    color: "#716add",
+                                    backdrop: `
+                                        rgba(0,0,123,0.4)
+                                        url("/images/nyan-cat.gif")
+                                        left top
+                                        no-repeat
+                                    `
+                                    });
                             let removeBtn=$(`<button class="btn btn-danger btn-sm remove-favorite" data-product="${productId}">Премахни от любими</button>`);
                             btn.replaceWith(removeBtn);
                         }else{
-                            alert('Грешка! Продукта не е добавен в любими'+res.error);
+                            Swal.fire({
+                                    toast:true,
+                                    position:'top',
+                                    title:'Възникна грешка',
+                                    icon:'error',
+                                    width: 600,
+                                    timer:7000,
+                                    timerProgressBar:true,
+                                    showConfirmButton:false,
+                                    didOpen: (toast) => {
+                                        toast.onmouseenter = Swal.stopTimer;
+                                        toast.onmouseleave = Swal.resumeTimer;
+                                    },
+                                    padding: "3em",
+                                    color: "#716add",
+                                    backdrop: `
+                                        rgba(0,0,123,0.4)
+                                        url("/images/nyan-cat.gif")
+                                        left top
+                                        no-repeat
+                                    `
+                                    });
                         }
                         
                     },error:function(error){
@@ -65,11 +118,53 @@ if(isset($_SESSION['flash'])){
                     success:function(response){
                         let res=JSON.parse(response);
                         if(res.success){
-                            alert('Продукта успешно премахнат от любими');
+                            Swal.fire({
+                                    toast:true,
+                                    position:'top',
+                                    title:'Продукта беше премахнат от любими.',
+                                    icon:'success',
+                                    width: 600,
+                                    timer:7000,
+                                    timerProgressBar:true,
+                                    showConfirmButton:false,
+                                    didOpen: (toast) => {
+                                        toast.onmouseenter = Swal.stopTimer;
+                                        toast.onmouseleave = Swal.resumeTimer;
+                                    },
+                                    padding: "3em",
+                                    color: "#716add",
+                                    backdrop: `
+                                        rgba(0,0,123,0.4)
+                                        url("/images/nyan-cat.gif")
+                                        left top
+                                        no-repeat
+                                    `
+                                    });
                             let addBtn=$(`<button class="btn btn-primary btn-sm add-favorite" data-product="${productId}">Добави в любими</button>`);
                             btn.replaceWith(addBtn);
                         }else{
-                            alert('Грешка! Продукта не е добавен в любими'+res.error);
+                            Swal.fire({
+                                    toast:true,
+                                    position:'top',
+                                    title:'Възникна грешка'+res.error,
+                                    icon:'error',
+                                    width: 600,
+                                    timer:7000,
+                                    timerProgressBar:true,
+                                    showConfirmButton:false,
+                                    didOpen: (toast) => {
+                                        toast.onmouseenter = Swal.stopTimer;
+                                        toast.onmouseleave = Swal.resumeTimer;
+                                    },
+                                    padding: "3em",
+                                    color: "#716add",
+                                    backdrop: `
+                                        rgba(0,0,123,0.4)
+                                        url("/images/nyan-cat.gif")
+                                        left top
+                                        no-repeat
+                                    `
+                                    });
                         }
                         
                     },error:function(error){
@@ -97,9 +192,14 @@ if(isset($_SESSION['flash'])){
                         <li class="nav-item">
                             <a class="nav-link <?php echo($page=='contacts' ? 'active':''); ?>" href="?page=contacts">Контакти</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo($page=='add_product' ? 'active':''); ?>" href="?page=add_product">Добави продукт</a>
-                        </li>
+                        <?php 
+                        if(isAdmin()){
+                            echo'<li class="nav-item">
+                            <a class="nav-link '.($page=='add_product' ? 'active':'').'" href="?page=add_product">Добави продукт</a>
+                        </li>';
+                        }
+                        ?>
+                        
                     </ul>
                     <div>
                         <?php 
@@ -122,11 +222,35 @@ if(isset($_SESSION['flash'])){
     <main class="container py-4" style="min-height:80vh;">
         <?php
             if(isset($flash['message'])){
-                echo'
-                <div class="alert alert-'.$flash['message']['type'].'" role="alert">
-                '.$flash['message']['text'].'
-                </div>
-                ';
+                $typeIcons=[
+                'success'=>'success',
+                'danger'=>'error',
+                'warning'=>'warning'
+                ];
+                echo'<script>
+                   Swal.fire({
+                    toast:true,
+                    position:\'top\',
+                    title:\''.$flash['message']['text'].'\',
+                    icon:\''.$typeIcons[$flash['message']['type']].'\',
+                    width: 600,
+                    timer:7000,
+                    timerProgressBar:true,
+                    showConfirmButton:false,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    },
+                    padding: "3em",
+                    color: "#716add",
+                    backdrop: `
+                        rgba(0,0,123,0.4)
+                        url("/images/nyan-cat.gif")
+                        left top
+                        no-repeat
+                    `
+                    });
+                </script>';
             }
             if(file_exists('Pages/'.$page.'.php')) {
                 require_once('./Pages/'.$page.'.php');

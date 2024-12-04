@@ -43,7 +43,7 @@
     <?php
     if(count($products)>0){
     foreach ($products as $product) {
-        $favBtn='';
+        $favBtn=$editDeleteButtons='';
         if(isset($_SESSION['user_name'])){
             if($product['isFavorite']=='1'){
             $favBtn='
@@ -55,15 +55,20 @@
             <button class="btn btn-primary btn-sm add-favorite" data-product="'.$product['id'].'">Добави в любими</button></div>';
         }
         }
-        echo'
-        <div class="card mb-4" style="width: 18rem;">
-        <div class="card-header d-flex flex-row justify-content=between">
+        if(isAdmin()){
+        $editDeleteButtons='
+         <div class="card-header d-flex flex-row justify-content=between">
             <a href="?page=edit_product&id='.$product['id'].'" class="btn btn-warning btn-sm"> Редактирай</a>
             <form method="post" action="./handlers/handleDeleteProduct.php">
                 <input type="hidden" name="id" value="'.$product['id'].'">
                 <button type="submit"  class="btn btn-danger btn-sm">Изтрий</button>
             </form>
         </div>
+        ';    
+        }
+        echo'
+        <div class="card mb-4" style="width: 18rem;">
+        '.$editDeleteButtons.'
         <img src="uploads/'.htmlspecialchars($product['image']).'" class="card-img-top" alt="Product Image">
         <div class="card-body">
             <h5 class="card-title">'.htmlspecialchars($product['title']).'</h5>

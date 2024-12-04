@@ -1,6 +1,14 @@
 <?php
 require_once('../functions.php');
 require_once('../db.php');
+
+if(!isAdmin()){
+    $_SESSION['flash']['message']['type']='warning';
+    $_SESSION['flash']['message']['text']='нямате достъп до тази страница!';
+    header('Location:../index.php');
+    exit;
+}
+
 $productId=intval($_POST['id']??0);
 if($productId==0){
     $_SESSION['flash']['message']['type']='danger';
